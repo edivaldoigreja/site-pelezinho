@@ -1,7 +1,7 @@
 // Credenciais de acesso (em produção, usar autenticação real)
 const ADMIN_CREDENTIALS = {
-  username: "admin",
-  password: "admin123",
+  username: "edivaldoigreja",
+  password: "peleedivaldo123",
 }
 
 // Elementos DOM
