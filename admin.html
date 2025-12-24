@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Administrativo - Pelezinho</title>
+    <link rel="shortcut icon" href="image/favicon.ico" type="image/x-icon">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --verde-principal: #09a74a;
+            --verde-escuro: #077a36;
+            --branco: #ffffff;
+            --preto: #000000;
+            --cinza-claro: #f5f5f5;
+            --cinza-medio: #e0e0e0;
+            --cinza-escuro: #333333;
+        }
+
+        body {
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--cinza-claro);
+            color: var(--cinza-escuro);
+        }
+
+        /* Login Page */
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--verde-escuro) 0%, var(--verde-principal) 100%);
+        }
+
+        .login-box {
+            background: var(--branco);
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .login-box h1 {
+            color: var(--verde-principal);
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid var(--cinza-medio);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--verde-principal);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            background: var(--verde-principal);
+            color: var(--branco);
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background: var(--verde-escuro);
+            transform: translateY(-2px);
+        }
+
+        .error-message {
+            color: #e74c3c;
+            text-align: center;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        /* Dashboard Layout */
+        .dashboard {
+            display: none;
+        }
+
+        .dashboard.active {
+            display: flex;
+        }
+
+        .sidebar {
+            width: 250px;
+            background: var(--cinza-escuro);
+            color: var(--branco);
+            min-height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            transition: left 0.3s ease;
+        }
+
+        .sidebar-header {
+            padding: 2rem 1.5rem;
+            background: var(--verde-principal);
+        }
+
+        .sidebar-header h2 {
+            font-size: 1.3rem;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 1rem 0;
+        }
+
+        .sidebar-menu li {
+            padding: 0;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 1.5rem;
+            color: var(--branco);
+            text-decoration: none;
+            transition: background 0.3s ease;
+        }
+
+        .sidebar-menu a:hover,
+        .sidebar-menu a.active {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-menu .icon {
+            font-size: 1.3rem;
+        }
+
+        .main-content {
+            margin-left: 250px;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+
+        .top-bar {
+            background: var(--branco);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .top-bar h1 {
+            color: var(--cinza-escuro);
+            font-size: 1.8rem;
+        }
+
+        .logout-btn {
+            padding: 10px 25px;
+            background: #e74c3c;
+            color: var(--branco);
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: #c0392b;
+        }
+
+        /* Estatísticas Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--branco);
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card .icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .stat-card h3 {
+            color: var(--cinza-escuro);
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card p {
+            color: #7f8c8d;
+            font-size: 1rem;
+        }
+
+        /* Tabela de Inscrições */
+        .table-container {
+            background: var(--branco);
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .table-header h2 {
+            color: var(--cinza-escuro);
+        }
+
+        .search-box {
+            padding: 10px 15px;
+            border: 2px solid var(--cinza-medio);
+            border-radius: 8px;
+            width: 300px;
+            font-size: 1rem;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: var(--verde-principal);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: var(--cinza-claro);
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--cinza-medio);
+        }
+
+        th {
+            font-weight: 600;
+            color: var(--cinza-escuro);
+        }
+
+        tr:hover {
+            background: var(--cinza-claro);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-view {
+            background: #3498db;
+            color: var(--branco);
+        }
+
+        .btn-view:hover {
+            background: #2980b9;
+        }
+
+        .btn-delete {
+            background: #e74c3c;
+            color: var(--branco);
+        }
+
+        .btn-delete:hover {
+            background: #c0392b;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #7f8c8d;
+        }
+
+        .empty-state .icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--branco);
+            padding: 2rem;
+            border-radius: 15px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-header h2 {
+            color: var(--verde-principal);
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 2rem;
+            cursor: pointer;
+            color: var(--cinza-escuro);
+        }
+
+        .detail-row {
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--cinza-medio);
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: var(--cinza-escuro);
+            margin-bottom: 0.3rem;
+        }
+
+        .detail-value {
+            color: #555;
+        }
+
+        .document-preview {
+            margin-top: 1rem;
+            text-align: center;
+        }
+
+        .document-preview img {
+            max-width: 100%;
+            border-radius: 8px;
+        }
+
+        /* Mobile Menu Toggle */
+        .menu-toggle-dash {
+            display: none;
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 1001;
+            background: var(--verde-principal);
+            color: var(--branco);
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .sidebar {
+                left: -250px;
+            }
+
+            .sidebar.active {
+                left: 0;
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 1rem;
+            }
+
+            .menu-toggle-dash {
+                display: block;
+            }
+
+            .top-bar {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .search-box {
+                width: 100%;
+            }
+
+            .table-container {
+                overflow-x: auto;
+            }
+
+            table {
+                min-width: 800px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Page -->
+    <div id="loginPage" class="login-container">
+        <div class="login-box">
+            <h1>🔐 Painel Admnistrativo</h1>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label>Usuário</label>
+                    <input type="text" id="username" required>
+                </div>
+                <div class="form-group">
+                    <label>Senha</label>
+                    <input type="password" id="password" required>
+                </div>
+                <button type="submit" class="btn">Entrar</button>
+                <p class="error-message" id="errorMessage">Usuário ou senha incorretos</p>
+            </form>
+            <p style="text-align: center; margin-top: 1.5rem; color: #7f8c8d; font-size: 0.9rem;">
+                <strong>Acesso padrão:</strong><br>
+                Usuário: admin<br>
+                Senha: admin123
+            </p>
+        </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div id="dashboard" class="dashboard">
+        <button class="menu-toggle-dash" onclick="toggleSidebar()">☰</button>
+        
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2>PELEZINHO</h2>
+                <p>Painel Administrativo</p>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="#" class="active"><span class="icon">📊</span> Dashboard</a></li>
+                <li><a href="#"><span class="icon">👥</span> Inscrições</a></li>
+                <li><a href="index.html" target="_blank"><span class="icon">🌐</span> Ver Site</a></li>
+            </ul>
+        </aside>
+
+        <main class="main-content">
+            <div class="top-bar">
+                <h1>Dashboard</h1>
+                <button class="logout-btn" onclick="logout()">Sair</button>
+            </div>
+
+            <!-- Estatísticas -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="icon">👥</div>
+                    <h3 id="totalInscricoes">0</h3>
+                    <p>Total de Inscrições</p>
+                </div>
+                <div class="stat-card">
+                    <div class="icon">🏃</div>
+                    <h3 id="totalSub7">0</h3>
+                    <p>Sub-7 (5-7 anos)</p>
+                </div>
+                <div class="stat-card">
+                    <div class="icon">⚽</div>
+                    <h3 id="totalSub11">0</h3>
+                    <p>Sub-9 e Sub-11 (8-11 anos)</p>
+                </div>
+                <div class="stat-card">
+                    <div class="icon">🏆</div>
+                    <h3 id="totalSub15">0</h3>
+                    <p>Sub-13 e Sub-15 (12-15 anos)</p>
+                </div>
+
+                <div class="stat-card">
+                    <div class="icon">🏆</div>
+                    <h3 id="totalSub15">0</h3>
+                    <p>Sub-16 e Sub-20 (16-20 anos)</p>
+                </div>
+            </div>
+
+            <!-- Tabela de Inscrições -->
+            <div class="table-container">
+                <div class="table-header">
+                    <h2>Todas as Inscrições</h2>
+                    <input type="text" class="search-box" id="searchInput" placeholder="Buscar por nome ou telefone...">
+                </div>
+                <div id="tableContent">
+                    <!-- Tabela será inserida aqui pelo JavaScript -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal de Detalhes -->
+    <div id="detailModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Detalhes da Inscrição</h2>
+                <button class="close-btn" onclick="closeDetailModal()">&times;</button>
+            </div>
+            <div id="detailContent">
+                <!-- Detalhes serão inseridos aqui -->
+            </div>
+        </div>
+    </div>
+
+    <script src="admin.js"></script>
+</body>
+</html>
